@@ -12,6 +12,7 @@ import RideDetailRow from '../components/confirmation/RideDetailRow';
 import GradientButton from '../components/common/GradientButton';
 import { Colors } from '../constants/colors';
 import { RideHistoryItem } from '../types';
+import { createBooking } from '../api/ridesService';
 
 type NavProp = NativeStackNavigationProp<{
     ConfirmRide: undefined;
@@ -47,6 +48,7 @@ const ConfirmRideScreen: React.FC = () => {
 
             dispatch(addCompletedRide(historyItem));
             dispatch(setBookingStatus('booked'));
+            createBooking(historyItem).catch(() => {});
             navigation.navigate('BookingSuccess');
         }, 1000);
     };
@@ -74,7 +76,7 @@ const ConfirmRideScreen: React.FC = () => {
                         className="scheme:bg-surface rounded-2xl px-4 mb-6 scheme:border-border border"
                         style={{ shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 8, elevation: 2 }}
                     >
-                        <RideDetailRow label="Estimated Price" value={`$${selectedRide.price.toFixed(2)}`} />
+                        <RideDetailRow label="Estimated Price" value={`₦${selectedRide.price.toLocaleString()}`} />
                         <RideDetailRow label="ETA" value={selectedRide.eta} />
                         <RideDetailRow
                             label="EcoPoints Earned"
