@@ -7,8 +7,7 @@ import {
     Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation, type NavigationProp } from '@react-navigation/native';
 import { useAppDispatch, useAppSelector } from '../hooks/reduxHook';
 import {
     setRides,
@@ -28,13 +27,7 @@ const MOCK_RIDES: Ride[] = [
 ];
 
 const HomeScreen: React.FC = () => {
-    const navigation = useNavigation<
-        NativeStackNavigationProp<{
-            HomeMain: undefined;
-            ConfirmRide: undefined;
-            BookingSuccess: undefined;
-        }>
-    >();
+    const navigation = useNavigation<NavigationProp<{ HomeMain: undefined; ConfirmRide: undefined; BookingSuccess: undefined }>>();
     const dispatch = useAppDispatch();
     const { rides, loading } = useAppSelector((state) => state.rides);
     const { destination } = useAppSelector((state) => state.booking);

@@ -1,8 +1,7 @@
 import React from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation, type NavigationProp } from '@react-navigation/native';
 import { useAppDispatch, useAppSelector } from '../hooks/reduxHook';
 import { setBookingStatus } from '../store/slices/bookingSlice';
 import { addCompletedRide } from '../store/slices/profileSlice';
@@ -14,13 +13,10 @@ import { Colors } from '../constants/colors';
 import { RideHistoryItem } from '../types';
 import { createBooking } from '../api/ridesService';
 
-type NavProp = NativeStackNavigationProp<{
-    ConfirmRide: undefined;
-    BookingSuccess: undefined;
-}>;
+type HomeStackNav = NavigationProp<{ HomeMain: undefined; ConfirmRide: undefined; BookingSuccess: undefined }>;
 
 const ConfirmRideScreen: React.FC = () => {
-    const navigation = useNavigation<NavProp>();
+    const navigation = useNavigation<HomeStackNav>();
     const dispatch = useAppDispatch();
     const selectedRide = useAppSelector(state => state.rides.selectedRide);
     const { origin, destination, status } = useAppSelector(state => state.booking);
