@@ -2,7 +2,8 @@ export const Colors = {
     primary: '#1A7A4A',
     accent: '#00C4A7',
     ecoPoints: '#F5A623',
-    ecoPointsLight: '#FFD54F',
+    ecoPointsSecondary: '#FFD54F',
+    textSecondary: '#8DB8AE',
     background: {
         light: '#F0F7F4',
         dark: '#0D1F1A',
