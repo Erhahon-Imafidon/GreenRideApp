@@ -16,7 +16,7 @@ const RideCard: React.FC<Props> = ({ ride, onPress }) => {
             onPress={() => onPress(ride)}
             activeOpacity={0.85}
             accessibilityRole="button"
-            accessibilityLabel={`${ride.vehicleType} ride, ${ride.eta}, $${ride.price.toFixed(2)}, saves ${ride.co2Saved} kg CO2`}
+            accessibilityLabel={`${ride.vehicleType} ride, ${ride.eta}, ₦${ride.price.toLocaleString()}, saves ${ride.co2Saved} kg CO2`}
             className="scheme:bg-surface rounded-2xl p-4 mb-3 scheme:border-border border"
             style={{ shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 8, elevation: 2 }}
         >
@@ -43,7 +43,7 @@ const RideCard: React.FC<Props> = ({ ride, onPress }) => {
                 </View>
 
                 <Text className="scheme:text-textPrimary font-bold text-lg">
-                    ${ride.price.toFixed(2)}
+                    ₦{ride.price.toLocaleString()}
                 </Text>
             </View>
         </TouchableOpacity>

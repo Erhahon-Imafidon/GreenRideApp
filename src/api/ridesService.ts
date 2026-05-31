@@ -1,5 +1,5 @@
 import axiosInstance from './axiosInstance';
-import { Ride } from '../types';
+import { Ride, RideHistoryItem } from '../types';
 
 export const getRides = async (): Promise<Ride[]> => {
     const response = await axiosInstance.get<Ride[]>('/rides');
@@ -9,4 +9,8 @@ export const getRides = async (): Promise<Ride[]> => {
 export const getRideById = async (id: number): Promise<Ride> => {
     const response = await axiosInstance.get<Ride>(`/rides/${id}`);
     return response.data;
+};
+
+export const createBooking = async (item: RideHistoryItem): Promise<void> => {
+    await axiosInstance.post('/bookings', item);
 };
