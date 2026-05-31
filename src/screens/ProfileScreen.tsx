@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, SafeAreaView, ScrollView, Switch } from 'react-native';
+import { View, Text, ScrollView, Switch } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
 import { useAppDispatch, useAppSelector } from '../hooks/reduxHook';
 import { toggleTheme } from '../store/slices/themeSlice';
@@ -90,7 +91,7 @@ const ProfileScreen: React.FC = () => {
                         </View>
                         <Switch
                             value={isDark}
-                            onValueChange={() => dispatch(toggleTheme())}
+                            onValueChange={() => { dispatch(toggleTheme()); }}
                             trackColor={{ false: '#E0EDE8', true: Colors.primary }}
                             thumbColor="#FFFFFF"
                             accessibilityRole="switch"
