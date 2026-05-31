@@ -10,7 +10,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useAppDispatch, useAppSelector } from '../hooks/reduxHook';
-import { setRides, setSelectedRide, setLoading, setError } from '../store/slices/ridesSlice';
+import {
+    setRides,
+    setSelectedRide,
+    setLoading,
+    setError,
+} from '../store/slices/ridesSlice';
 import { setDestination } from '../store/slices/bookingSlice';
 import { getRides } from '../api/ridesService';
 import RideList from '../components/home/RideList';
@@ -18,15 +23,21 @@ import RideMap from '../components/map/RideMap';
 import { Ride } from '../types';
 
 const MOCK_RIDES: Ride[] = [
-    { id: 1, vehicleType: 'Electric', eta: '3 mins', price: 7.5, co2Saved: 1.4 },
-    { id: 2, vehicleType: 'Hybrid', eta: '4 mins', price: 6.8, co2Saved: 0.8 },
+    { id: 1, vehicleType: 'Electric', eta: '3 mins', price: 2500, co2Saved: 1.4 },
+    { id: 2, vehicleType: 'Hybrid', eta: '4 mins', price: 1800, co2Saved: 0.8 },
 ];
 
 const HomeScreen: React.FC = () => {
-    const navigation = useNavigation<NativeStackNavigationProp<{ HomeMain: undefined; ConfirmRide: undefined; BookingSuccess: undefined }>>();
+    const navigation = useNavigation<
+        NativeStackNavigationProp<{
+            HomeMain: undefined;
+            ConfirmRide: undefined;
+            BookingSuccess: undefined;
+        }>
+    >();
     const dispatch = useAppDispatch();
-    const { rides, loading } = useAppSelector(state => state.rides);
-    const { destination } = useAppSelector(state => state.booking);
+    const { rides, loading } = useAppSelector((state) => state.rides);
+    const { destination } = useAppSelector((state) => state.booking);
     const [destinationInput, setDestinationInput] = useState('');
 
     const fetchRides = async () => {
@@ -36,6 +47,7 @@ const HomeScreen: React.FC = () => {
             const data = await getRides();
             dispatch(setRides(data));
         } catch {
+            if (__DEV__) { console.log('[GreenRide] Server unreachable — using mock rides'); }
             dispatch(setRides(MOCK_RIDES));
         } finally {
             dispatch(setLoading(false));
@@ -44,7 +56,7 @@ const HomeScreen: React.FC = () => {
 
     useEffect(() => {
         fetchRides();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleSelectRide = (ride: Ride) => {
@@ -70,7 +82,12 @@ const HomeScreen: React.FC = () => {
             >
                 <View
                     className="scheme:bg-surface rounded-xl px-4 py-3 mb-4 scheme:border-border border flex-row items-center gap-2"
-                    style={{ shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 8, elevation: 3 }}
+                    style={{
+                        shadowColor: '#000',
+                        shadowOpacity: 0.06,
+                        shadowRadius: 8,
+                        elevation: 3,
+                    }}
                 >
                     <Text>🔍</Text>
                     <TextInput

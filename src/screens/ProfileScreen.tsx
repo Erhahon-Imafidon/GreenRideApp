@@ -2,12 +2,13 @@ import React from 'react';
 import { View, Text, ScrollView, Switch } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
-import { useAppDispatch, useAppSelector } from '../hooks/reduxHook';
-import { toggleTheme } from '../store/slices/themeSlice';
+import { useAppSelector } from '../hooks/reduxHook';
+import { useTheme } from '../context/ThemeContext';
 import StatCard from '../components/profile/StatCard';
 import EcoPointsCard from '../components/profile/EcoPointsCard';
 import AchievementBadge, { Achievement } from '../components/profile/AchievementBadge';
 import { Colors } from '../constants/colors';
+import { RideHistoryItem } from '../types';
 
 const ACHIEVEMENTS: Achievement[] = [
     { id: '1', emoji: '🌱', label: 'First Eco Ride', unlocked: true },
@@ -16,10 +17,39 @@ const ACHIEVEMENTS: Achievement[] = [
     { id: '4', emoji: '🌍', label: '10kg CO₂ Saved', unlocked: false },
 ];
 
+const formatRideDate = (iso: string): string => {
+    const d = new Date(iso);
+    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) +
+        ' · ' +
+        d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+};
+
+const RideHistoryRow: React.FC<{ item: RideHistoryItem; isLast: boolean }> = ({ item, isLast }) => (
+    <View
+        className={`py-3 flex-row items-center justify-between${isLast ? '' : ' border-b scheme:border-border'}`}
+    >
+        <View className="flex-1 mr-3">
+            <Text className="scheme:text-textPrimary font-semibold text-sm">
+                {item.vehicleType === 'Electric' ? '⚡' : '🔋'} {item.vehicleType} Ride
+            </Text>
+            <Text className="scheme:text-textSecondary text-xs mt-0.5">
+                🌿 {item.co2Saved} kg CO₂ · {formatRideDate(item.date)}
+            </Text>
+        </View>
+        <View className="items-end">
+            <Text className="scheme:text-textPrimary font-bold text-sm">
+                ₦{item.price.toLocaleString()}
+            </Text>
+            <Text className="text-xs mt-0.5" style={{ color: Colors.ecoPoints }}>
+                +{item.ecoPointsEarned} pts
+            </Text>
+        </View>
+    </View>
+);
+
 const ProfileScreen: React.FC = () => {
-    const dispatch = useAppDispatch();
-    const { totalRides, totalCo2Saved, ecoPoints } = useAppSelector(state => state.profile);
-    const { mode } = useAppSelector(state => state.theme);
+    const { mode, toggleTheme } = useTheme();
+    const { totalRides, totalCo2Saved, ecoPoints, rideHistory } = useAppSelector(state => state.profile);
     const isDark = mode === 'dark';
 
     return (
@@ -76,6 +106,30 @@ const ProfileScreen: React.FC = () => {
                         ))}
                     </View>
 
+                    <Text className="scheme:text-textPrimary font-bold text-base mb-3">
+                        Recent Rides
+                    </Text>
+                    <View
+                        className="scheme:bg-surface rounded-2xl px-4 mb-6 scheme:border-border border"
+                        style={{ shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 8, elevation: 2 }}
+                    >
+                        {rideHistory.length === 0 ? (
+                            <View className="py-6 items-center">
+                                <Text className="scheme:text-textSecondary text-sm">
+                                    No rides yet — book your first green ride!
+                                </Text>
+                            </View>
+                        ) : (
+                            rideHistory.map((item, index) => (
+                                <RideHistoryRow
+                                    key={item.id}
+                                    item={item}
+                                    isLast={index === rideHistory.length - 1}
+                                />
+                            ))
+                        )}
+                    </View>
+
                     <View
                         className="scheme:bg-surface rounded-2xl px-4 py-4 flex-row items-center justify-between scheme:border-border border mb-6"
                         style={{ shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 6, elevation: 2 }}
@@ -91,7 +145,7 @@ const ProfileScreen: React.FC = () => {
                         </View>
                         <Switch
                             value={isDark}
-                            onValueChange={() => { dispatch(toggleTheme()); }}
+                            onValueChange={toggleTheme}
                             trackColor={{ false: '#E0EDE8', true: Colors.primary }}
                             thumbColor="#FFFFFF"
                             accessibilityRole="switch"
