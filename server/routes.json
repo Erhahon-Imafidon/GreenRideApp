@@ -1,0 +1,4 @@
+{
+    "/api/rides": "/rides",
+    "/api/bookings": "/bookings"
+}
