@@ -16,15 +16,28 @@ const RideCard: React.FC<Props> = ({ ride, onPress }) => {
             onPress={() => onPress(ride)}
             activeOpacity={0.85}
             accessibilityRole="button"
-            accessibilityLabel={`${ride.vehicleType} ride, ${ride.eta}, ₦${ride.price.toLocaleString()}, saves ${ride.co2Saved} kg CO2`}
+            accessibilityLabel={`${ride.vehicleType} ride, ${
+                ride.eta
+            }, ₦${ride.price.toLocaleString()}, saves ${ride.co2Saved} kg CO2`}
             className="scheme:bg-surface rounded-2xl p-4 mb-3 scheme:border-border border"
-            style={{ shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 8, elevation: 2 }}
+            style={{
+                shadowColor: '#000',
+                shadowOpacity: 0.05,
+                shadowRadius: 8,
+                elevation: 2,
+            }}
         >
             <View className="flex-row items-center gap-3">
                 <View
-                    className={`w-12 h-12 rounded-xl items-center justify-center ${isElectric ? 'scheme:bg-electricBadge' : 'scheme:bg-hybridBadge'}`}
+                    className={`w-12 h-12 rounded-xl items-center justify-center ${
+                        isElectric
+                            ? 'scheme:bg-electricBadge'
+                            : 'scheme:bg-hybridBadge'
+                    }`}
                 >
-                    <Text style={{ fontSize: 22 }}>{isElectric ? '⚡' : '🔋'}</Text>
+                    <Text style={{ fontSize: 22 }}>
+                        {isElectric ? '⚡' : '🔋'}
+                    </Text>
                 </View>
 
                 <View className="flex-1">

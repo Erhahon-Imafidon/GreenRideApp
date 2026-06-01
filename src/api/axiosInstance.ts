@@ -13,13 +13,13 @@ const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.response.use(
-    response => response,
-    error => {
+    (response) => response,
+    (error) => {
         if (error?.response?.status) {
             console.error('[API Error]', error.response.status, error.message);
         }
         return Promise.reject(error);
-    },
+    }
 );
 
 export default axiosInstance;

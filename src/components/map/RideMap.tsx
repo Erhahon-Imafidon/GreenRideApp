@@ -1,6 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import MapView, { Marker, PROVIDER_GOOGLE, UserLocationChangeEvent } from 'react-native-maps';
+import MapView, {
+    Marker,
+    PROVIDER_GOOGLE,
+    UserLocationChangeEvent,
+} from 'react-native-maps';
 
 interface Coordinate {
     latitude: number;
@@ -26,7 +30,9 @@ const RideMap: React.FC<Props> = ({ destination, style }) => {
     const handleUserLocationChange = (event: UserLocationChangeEvent) => {
         if (!centeredOnUser) {
             const coordinate = event.nativeEvent.coordinate;
-            if (!coordinate) { return; }
+            if (!coordinate) {
+                return;
+            }
             mapRef.current?.animateToRegion(
                 {
                     latitude: coordinate.latitude,
@@ -34,7 +40,7 @@ const RideMap: React.FC<Props> = ({ destination, style }) => {
                     latitudeDelta: 0.02,
                     longitudeDelta: 0.02,
                 },
-                1000,
+                1000
             );
             setCenteredOnUser(true);
         }
@@ -48,7 +54,7 @@ const RideMap: React.FC<Props> = ({ destination, style }) => {
                     latitudeDelta: 0.05,
                     longitudeDelta: 0.05,
                 },
-                1000,
+                1000
             );
         }
     }, [destination]);

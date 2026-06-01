@@ -23,7 +23,10 @@ const TabButton = (props: any) => {
             {...props}
             style={[
                 props.style,
-                { borderTopWidth: 2, borderTopColor: isSelected ? '#1A7A4A' : 'transparent' },
+                {
+                    borderTopWidth: 2,
+                    borderTopColor: isSelected ? '#1A7A4A' : 'transparent',
+                },
             ]}
         />
     );

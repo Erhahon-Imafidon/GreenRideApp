@@ -13,9 +13,11 @@ const ThemeContext = createContext<ThemeContextValue>({
     toggleTheme: () => {},
 });
 
-export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
+    children,
+}) => {
     const [mode, setMode] = useState<ThemeMode>(
-        () => (Appearance.getColorScheme() ?? 'light') as ThemeMode,
+        () => (Appearance.getColorScheme() ?? 'light') as ThemeMode
     );
 
     const toggleTheme = () => {

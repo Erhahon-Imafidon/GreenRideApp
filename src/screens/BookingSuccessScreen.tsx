@@ -10,8 +10,8 @@ import { Colors } from '../constants/colors';
 const BookingSuccessScreen: React.FC = () => {
     const navigation = useNavigation();
     const dispatch = useAppDispatch();
-    const selectedRide = useAppSelector(state => state.rides.selectedRide);
-    const ecoPoints = useAppSelector(state => state.profile.ecoPoints);
+    const selectedRide = useAppSelector((state) => state.rides.selectedRide);
+    const ecoPoints = useAppSelector((state) => state.profile.ecoPoints);
 
     const scaleAnim = useRef(new Animated.Value(0)).current;
     const opacityAnim = useRef(new Animated.Value(0)).current;
@@ -48,7 +48,10 @@ const BookingSuccessScreen: React.FC = () => {
         <SafeAreaView className="flex-1 scheme:bg-background">
             <View className="flex-1 items-center justify-center px-6">
                 <Animated.View
-                    style={{ transform: [{ scale: scaleAnim }], opacity: opacityAnim }}
+                    style={{
+                        transform: [{ scale: scaleAnim }],
+                        opacity: opacityAnim,
+                    }}
                     className="items-center"
                 >
                     <View
@@ -72,7 +75,12 @@ const BookingSuccessScreen: React.FC = () => {
 
                     <View
                         className="scheme:bg-surface rounded-2xl px-8 py-5 items-center mb-8 w-full scheme:border-border border"
-                        style={{ shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 8, elevation: 2 }}
+                        style={{
+                            shadowColor: '#000',
+                            shadowOpacity: 0.05,
+                            shadowRadius: 8,
+                            elevation: 2,
+                        }}
                     >
                         <Text style={{ fontSize: 32 }}>🪙</Text>
                         <Text

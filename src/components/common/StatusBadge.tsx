@@ -10,11 +10,15 @@ const StatusBadge: React.FC<Props> = ({ vehicleType }) => {
 
     return (
         <View
-            className={`px-3 py-1 rounded-full ${isElectric ? 'scheme:bg-electricBadge' : 'scheme:bg-hybridBadge'}`}
+            className={`px-3 py-1 rounded-full ${
+                isElectric ? 'scheme:bg-electricBadge' : 'scheme:bg-hybridBadge'
+            }`}
             accessibilityLabel={`${vehicleType} vehicle`}
         >
             <Text
-                className={`text-xs font-bold ${isElectric ? 'text-accent-light' : 'text-ecoPoints-light'}`}
+                className={`text-xs font-bold ${
+                    isElectric ? 'text-accent-light' : 'text-ecoPoints-light'
+                }`}
             >
                 {isElectric ? '⚡ Electric' : '🔋 Hybrid'}
             </Text>

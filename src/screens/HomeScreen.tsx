@@ -29,17 +29,32 @@ interface Coordinate {
 }
 
 const MOCK_RIDES: Ride[] = [
-    { id: 1, vehicleType: 'Electric', eta: '3 mins', price: 2500, co2Saved: 1.4 },
+    {
+        id: 1,
+        vehicleType: 'Electric',
+        eta: '3 mins',
+        price: 2500,
+        co2Saved: 1.4,
+    },
     { id: 2, vehicleType: 'Hybrid', eta: '4 mins', price: 1800, co2Saved: 0.8 },
 ];
 
 const HomeScreen: React.FC = () => {
-    const navigation = useNavigation<NavigationProp<{ HomeMain: undefined; ConfirmRide: undefined; BookingSuccess: undefined }>>();
+    const navigation =
+        useNavigation<
+            NavigationProp<{
+                HomeMain: undefined;
+                ConfirmRide: undefined;
+                BookingSuccess: undefined;
+            }>
+        >();
     const dispatch = useAppDispatch();
     const { rides, loading } = useAppSelector((state) => state.rides);
     const { destination } = useAppSelector((state) => state.booking);
     const [destinationInput, setDestinationInput] = useState('');
-    const [destinationCoords, setDestinationCoords] = useState<Coordinate | undefined>();
+    const [destinationCoords, setDestinationCoords] = useState<
+        Coordinate | undefined
+    >();
 
     const requestLocationPermission = async () => {
         if (Platform.OS === 'android') {
@@ -47,10 +62,11 @@ const HomeScreen: React.FC = () => {
                 PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
                 {
                     title: 'Location Permission',
-                    message: 'GreenRide needs your location to show nearby rides.',
+                    message:
+                        'GreenRide needs your location to show nearby rides.',
                     buttonPositive: 'Allow',
                     buttonNegative: 'Deny',
-                },
+                }
             );
         }
     };
@@ -69,10 +85,14 @@ const HomeScreen: React.FC = () => {
                 const { lat, lng } = json.results[0].geometry.location;
                 setDestinationCoords({ latitude: lat, longitude: lng });
             } else {
-                if (__DEV__) { console.log('[GreenRide] Geocoding failed:', json.status); }
+                if (__DEV__) {
+                    console.log('[GreenRide] Geocoding failed:', json.status);
+                }
             }
         } catch (e) {
-            if (__DEV__) { console.log('[GreenRide] Geocoding error:', e); }
+            if (__DEV__) {
+                console.log('[GreenRide] Geocoding error:', e);
+            }
         }
     };
 
@@ -83,7 +103,11 @@ const HomeScreen: React.FC = () => {
             const data = await getRides();
             dispatch(setRides(data));
         } catch {
-            if (__DEV__) { console.log('[GreenRide] Server unreachable — using mock rides'); }
+            if (__DEV__) {
+                console.log(
+                    '[GreenRide] Server unreachable — using mock rides'
+                );
+            }
             dispatch(setRides(MOCK_RIDES));
         } finally {
             dispatch(setLoading(false));
@@ -111,10 +135,7 @@ const HomeScreen: React.FC = () => {
 
     return (
         <SafeAreaView className="flex-1 scheme:bg-background">
-            <RideMap
-                style={{ height: 220 }}
-                destination={destinationCoords}
-            />
+            <RideMap style={{ height: 220 }} destination={destinationCoords} />
 
             <KeyboardAvoidingView
                 className="flex-1 px-4 pt-4"
@@ -133,7 +154,9 @@ const HomeScreen: React.FC = () => {
                     <TextInput
                         value={destinationInput}
                         onChangeText={setDestinationInput}
-                        onSubmitEditing={() => geocodeDestination(destinationInput)}
+                        onSubmitEditing={() =>
+                            geocodeDestination(destinationInput)
+                        }
                         placeholder="Where are you going?"
                         placeholderTextColor="#8DB8AE"
                         className="flex-1 scheme:text-textPrimary text-sm"

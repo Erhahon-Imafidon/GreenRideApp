@@ -6,7 +6,9 @@ import { useAppSelector } from '../hooks/reduxHook';
 import { useTheme } from '../context/ThemeContext';
 import StatCard from '../components/profile/StatCard';
 import EcoPointsCard from '../components/profile/EcoPointsCard';
-import AchievementBadge, { Achievement } from '../components/profile/AchievementBadge';
+import AchievementBadge, {
+    Achievement,
+} from '../components/profile/AchievementBadge';
 import { Colors } from '../constants/colors';
 import { RideHistoryItem } from '../types';
 
@@ -19,18 +21,30 @@ const ACHIEVEMENTS: Achievement[] = [
 
 const formatRideDate = (iso: string): string => {
     const d = new Date(iso);
-    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) +
+    return (
+        d.toLocaleDateString('en-GB', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric',
+        }) +
         ' · ' +
-        d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+        d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
+    );
 };
 
-const RideHistoryRow: React.FC<{ item: RideHistoryItem; isLast: boolean }> = ({ item, isLast }) => (
+const RideHistoryRow: React.FC<{ item: RideHistoryItem; isLast: boolean }> = ({
+    item,
+    isLast,
+}) => (
     <View
-        className={`py-3 flex-row items-center justify-between${isLast ? '' : ' border-b scheme:border-border'}`}
+        className={`py-3 flex-row items-center justify-between${
+            isLast ? '' : ' border-b scheme:border-border'
+        }`}
     >
         <View className="flex-1 mr-3">
             <Text className="scheme:text-textPrimary font-semibold text-sm">
-                {item.vehicleType === 'Electric' ? '⚡' : '🔋'} {item.vehicleType} Ride
+                {item.vehicleType === 'Electric' ? '⚡' : '🔋'}{' '}
+                {item.vehicleType} Ride
             </Text>
             <Text className="scheme:text-textSecondary text-xs mt-0.5">
                 🌿 {item.co2Saved} kg CO₂ · {formatRideDate(item.date)}
@@ -40,7 +54,10 @@ const RideHistoryRow: React.FC<{ item: RideHistoryItem; isLast: boolean }> = ({ 
             <Text className="scheme:text-textPrimary font-bold text-sm">
                 ₦{item.price.toLocaleString()}
             </Text>
-            <Text className="text-xs mt-0.5" style={{ color: Colors.ecoPoints }}>
+            <Text
+                className="text-xs mt-0.5"
+                style={{ color: Colors.ecoPoints }}
+            >
                 +{item.ecoPointsEarned} pts
             </Text>
         </View>
@@ -49,7 +66,8 @@ const RideHistoryRow: React.FC<{ item: RideHistoryItem; isLast: boolean }> = ({ 
 
 const ProfileScreen: React.FC = () => {
     const { mode, toggleTheme } = useTheme();
-    const { totalRides, totalCo2Saved, ecoPoints, rideHistory } = useAppSelector(state => state.profile);
+    const { totalRides, totalCo2Saved, ecoPoints, rideHistory } =
+        useAppSelector((state) => state.profile);
     const isDark = mode === 'dark';
 
     return (
@@ -59,7 +77,11 @@ const ProfileScreen: React.FC = () => {
                     colors={Colors.gradientGreen}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
-                    style={{ paddingHorizontal: 16, paddingTop: 24, paddingBottom: 32 }}
+                    style={{
+                        paddingHorizontal: 16,
+                        paddingTop: 24,
+                        paddingBottom: 32,
+                    }}
                 >
                     <View className="items-center">
                         <View
@@ -69,7 +91,10 @@ const ProfileScreen: React.FC = () => {
                         >
                             <Text style={{ fontSize: 32 }}>👤</Text>
                         </View>
-                        <Text className="text-white font-bold text-xl" accessibilityRole="header">
+                        <Text
+                            className="text-white font-bold text-xl"
+                            accessibilityRole="header"
+                        >
                             Eco Rider
                         </Text>
                         <Text className="text-white text-sm opacity-75 mt-1">
@@ -101,7 +126,7 @@ const ProfileScreen: React.FC = () => {
                         Achievements
                     </Text>
                     <View className="flex-row gap-3 mb-6 flex-wrap">
-                        {ACHIEVEMENTS.map(a => (
+                        {ACHIEVEMENTS.map((a) => (
                             <AchievementBadge key={a.id} achievement={a} />
                         ))}
                     </View>
@@ -111,7 +136,12 @@ const ProfileScreen: React.FC = () => {
                     </Text>
                     <View
                         className="scheme:bg-surface rounded-2xl px-4 mb-6 scheme:border-border border"
-                        style={{ shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 8, elevation: 2 }}
+                        style={{
+                            shadowColor: '#000',
+                            shadowOpacity: 0.05,
+                            shadowRadius: 8,
+                            elevation: 2,
+                        }}
                     >
                         {rideHistory.length === 0 ? (
                             <View className="py-6 items-center">
@@ -132,8 +162,15 @@ const ProfileScreen: React.FC = () => {
 
                     <View
                         className="scheme:bg-surface rounded-2xl px-4 py-4 flex-row items-center justify-between scheme:border-border border mb-6"
-                        style={{ shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 6, elevation: 2 }}
-                        accessibilityLabel={`Dark mode is ${isDark ? 'on' : 'off'}`}
+                        style={{
+                            shadowColor: '#000',
+                            shadowOpacity: 0.05,
+                            shadowRadius: 6,
+                            elevation: 2,
+                        }}
+                        accessibilityLabel={`Dark mode is ${
+                            isDark ? 'on' : 'off'
+                        }`}
                     >
                         <View>
                             <Text className="scheme:text-textPrimary font-semibold">
@@ -146,7 +183,10 @@ const ProfileScreen: React.FC = () => {
                         <Switch
                             value={isDark}
                             onValueChange={toggleTheme}
-                            trackColor={{ false: '#E0EDE8', true: Colors.primary }}
+                            trackColor={{
+                                false: '#E0EDE8',
+                                true: Colors.primary,
+                            }}
                             thumbColor="#FFFFFF"
                             accessibilityRole="switch"
                             accessibilityLabel="Toggle dark mode"

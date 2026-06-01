@@ -13,13 +13,19 @@ import { Colors } from '../constants/colors';
 import { RideHistoryItem } from '../types';
 import { createBooking } from '../api/ridesService';
 
-type HomeStackNav = NavigationProp<{ HomeMain: undefined; ConfirmRide: undefined; BookingSuccess: undefined }>;
+type HomeStackNav = NavigationProp<{
+    HomeMain: undefined;
+    ConfirmRide: undefined;
+    BookingSuccess: undefined;
+}>;
 
 const ConfirmRideScreen: React.FC = () => {
     const navigation = useNavigation<HomeStackNav>();
     const dispatch = useAppDispatch();
-    const selectedRide = useAppSelector(state => state.rides.selectedRide);
-    const { origin, destination, status } = useAppSelector(state => state.booking);
+    const selectedRide = useAppSelector((state) => state.rides.selectedRide);
+    const { origin, destination, status } = useAppSelector(
+        (state) => state.booking
+    );
 
     if (!selectedRide) {
         navigation.goBack();
@@ -70,20 +76,36 @@ const ConfirmRideScreen: React.FC = () => {
 
                     <View
                         className="scheme:bg-surface rounded-2xl px-4 mb-6 scheme:border-border border"
-                        style={{ shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 8, elevation: 2 }}
+                        style={{
+                            shadowColor: '#000',
+                            shadowOpacity: 0.05,
+                            shadowRadius: 8,
+                            elevation: 2,
+                        }}
                     >
-                        <RideDetailRow label="Estimated Price" value={`₦${selectedRide.price.toLocaleString()}`} />
+                        <RideDetailRow
+                            label="Estimated Price"
+                            value={`₦${selectedRide.price.toLocaleString()}`}
+                        />
                         <RideDetailRow label="ETA" value={selectedRide.eta} />
                         <RideDetailRow
                             label="EcoPoints Earned"
                             value={`+${ecoPointsEarned} pts 🪙`}
                             valueColor={Colors.ecoPoints}
                         />
-                        <RideDetailRow label="Vehicle Type" value={selectedRide.vehicleType} isLast />
+                        <RideDetailRow
+                            label="Vehicle Type"
+                            value={selectedRide.vehicleType}
+                            isLast
+                        />
                     </View>
 
                     <GradientButton
-                        title={status === 'loading' ? 'Confirming...' : '✅ Confirm Ride'}
+                        title={
+                            status === 'loading'
+                                ? 'Confirming...'
+                                : '✅ Confirm Ride'
+                        }
                         onPress={handleConfirm}
                         disabled={status === 'loading'}
                         accessibilityLabel="Confirm your ride booking"
