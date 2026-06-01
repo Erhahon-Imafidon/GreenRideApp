@@ -5,6 +5,7 @@ import {
     TextInput,
     KeyboardAvoidingView,
     Platform,
+    PermissionsAndroid,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, type NavigationProp } from '@react-navigation/native';
@@ -33,6 +34,20 @@ const HomeScreen: React.FC = () => {
     const { destination } = useAppSelector((state) => state.booking);
     const [destinationInput, setDestinationInput] = useState('');
 
+    const requestLocationPermission = async () => {
+        if (Platform.OS === 'android') {
+            await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+                {
+                    title: 'Location Permission',
+                    message: 'GreenRide needs your location to show nearby rides.',
+                    buttonPositive: 'Allow',
+                    buttonNegative: 'Deny',
+                },
+            );
+        }
+    };
+
     const fetchRides = async () => {
         dispatch(setLoading(true));
         dispatch(setError(null));
@@ -48,6 +63,7 @@ const HomeScreen: React.FC = () => {
     };
 
     useEffect(() => {
+        requestLocationPermission();
         fetchRides();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
