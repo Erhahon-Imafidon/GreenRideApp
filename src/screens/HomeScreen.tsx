@@ -21,6 +21,12 @@ import { getRides } from '../api/ridesService';
 import RideList from '../components/home/RideList';
 import RideMap from '../components/map/RideMap';
 import { Ride } from '../types';
+import { MAPS_API_KEY } from '../constants/maps';
+
+interface Coordinate {
+    latitude: number;
+    longitude: number;
+}
 
 const MOCK_RIDES: Ride[] = [
     { id: 1, vehicleType: 'Electric', eta: '3 mins', price: 2500, co2Saved: 1.4 },
@@ -33,6 +39,7 @@ const HomeScreen: React.FC = () => {
     const { rides, loading } = useAppSelector((state) => state.rides);
     const { destination } = useAppSelector((state) => state.booking);
     const [destinationInput, setDestinationInput] = useState('');
+    const [destinationCoords, setDestinationCoords] = useState<Coordinate | undefined>();
 
     const requestLocationPermission = async () => {
         if (Platform.OS === 'android') {
@@ -45,6 +52,27 @@ const HomeScreen: React.FC = () => {
                     buttonNegative: 'Deny',
                 },
             );
+        }
+    };
+
+    const geocodeDestination = async (address: string) => {
+        if (!address.trim()) {
+            setDestinationCoords(undefined);
+            return;
+        }
+        try {
+            const query = encodeURIComponent(address);
+            const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${query}&key=${MAPS_API_KEY}`;
+            const response = await fetch(url);
+            const json = await response.json();
+            if (json.status === 'OK' && json.results.length > 0) {
+                const { lat, lng } = json.results[0].geometry.location;
+                setDestinationCoords({ latitude: lat, longitude: lng });
+            } else {
+                if (__DEV__) { console.log('[GreenRide] Geocoding failed:', json.status); }
+            }
+        } catch (e) {
+            if (__DEV__) { console.log('[GreenRide] Geocoding error:', e); }
         }
     };
 
@@ -68,6 +96,13 @@ const HomeScreen: React.FC = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    // Clear destination coords when booking resets
+    useEffect(() => {
+        if (!destination) {
+            setDestinationCoords(undefined);
+        }
+    }, [destination]);
+
     const handleSelectRide = (ride: Ride) => {
         dispatch(setSelectedRide(ride));
         dispatch(setDestination(destinationInput || 'Destination'));
@@ -78,11 +113,7 @@ const HomeScreen: React.FC = () => {
         <SafeAreaView className="flex-1 scheme:bg-background">
             <RideMap
                 style={{ height: 220 }}
-                destination={
-                    destination
-                        ? { latitude: 51.515, longitude: -0.09 }
-                        : undefined
-                }
+                destination={destinationCoords}
             />
 
             <KeyboardAvoidingView
@@ -102,6 +133,7 @@ const HomeScreen: React.FC = () => {
                     <TextInput
                         value={destinationInput}
                         onChangeText={setDestinationInput}
+                        onSubmitEditing={() => geocodeDestination(destinationInput)}
                         placeholder="Where are you going?"
                         placeholderTextColor="#8DB8AE"
                         className="flex-1 scheme:text-textPrimary text-sm"
