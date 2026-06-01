@@ -32,7 +32,9 @@ describe('RideCard', () => {
         render(<RideCard ride={mockElectricRide} onPress={jest.fn()} />);
 
         // getAllByText because the vehicle type appears in both the RideCard Text and the mocked StatusBadge
-        expect(screen.getAllByText('Electric').length).toBeGreaterThanOrEqual(1);
+        expect(screen.getAllByText('Electric').length).toBeGreaterThanOrEqual(
+            1
+        );
         expect(screen.getByText('$7.50')).toBeTruthy();
         expect(screen.getByText('🌱 Saves 1.4 kg CO₂')).toBeTruthy();
         expect(screen.getByText('3 mins away')).toBeTruthy();

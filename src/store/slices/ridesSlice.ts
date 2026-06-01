@@ -34,5 +34,6 @@ const ridesSlice = createSlice({
     },
 });
 
-export const { setRides, setSelectedRide, setLoading, setError } = ridesSlice.actions;
+export const { setRides, setSelectedRide, setLoading, setError } =
+    ridesSlice.actions;
 export default ridesSlice.reducer;

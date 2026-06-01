@@ -79,6 +79,11 @@ yarn-error.log
 .claude/
 CLAUDE.md
 
+# API keys — never commit these
+src/constants/maps.ts
+.env
+.env.*
+
 # Superpowers brainstorm sessions
 .superpowers/
 /docs/ 

@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, {
+    Marker,
+    PROVIDER_GOOGLE,
+    UserLocationChangeEvent,
+} from 'react-native-maps';
 
 interface Coordinate {
     latitude: number;
@@ -8,36 +12,63 @@ interface Coordinate {
 }
 
 interface Props {
-    userLocation?: Coordinate;
     destination?: Coordinate;
     style?: object;
 }
 
 const DEFAULT_REGION = {
-    latitude: 51.5074,
-    longitude: -0.1278,
+    latitude: 6.5244,
+    longitude: 3.3792,
     latitudeDelta: 0.05,
     longitudeDelta: 0.05,
 };
 
-const RideMap: React.FC<Props> = ({ userLocation, destination, style }) => {
-    const region = userLocation
-        ? {
-              latitude: userLocation.latitude,
-              longitude: userLocation.longitude,
-              latitudeDelta: 0.05,
-              longitudeDelta: 0.05,
-          }
-        : DEFAULT_REGION;
+const RideMap: React.FC<Props> = ({ destination, style }) => {
+    const mapRef = useRef<MapView>(null);
+    const [centeredOnUser, setCenteredOnUser] = useState(false);
+
+    const handleUserLocationChange = (event: UserLocationChangeEvent) => {
+        if (!centeredOnUser) {
+            const coordinate = event.nativeEvent.coordinate;
+            if (!coordinate) {
+                return;
+            }
+            mapRef.current?.animateToRegion(
+                {
+                    latitude: coordinate.latitude,
+                    longitude: coordinate.longitude,
+                    latitudeDelta: 0.02,
+                    longitudeDelta: 0.02,
+                },
+                1000
+            );
+            setCenteredOnUser(true);
+        }
+    };
+
+    useEffect(() => {
+        if (destination) {
+            mapRef.current?.animateToRegion(
+                {
+                    ...destination,
+                    latitudeDelta: 0.05,
+                    longitudeDelta: 0.05,
+                },
+                1000
+            );
+        }
+    }, [destination]);
 
     return (
         <View style={[styles.container, style]}>
             <MapView
+                ref={mapRef}
                 provider={PROVIDER_GOOGLE}
                 style={styles.map}
-                region={region}
+                initialRegion={DEFAULT_REGION}
                 showsUserLocation
                 showsMyLocationButton={false}
+                onUserLocationChange={handleUserLocationChange}
                 accessibilityLabel="Map showing nearby eco-friendly rides"
             >
                 {destination && (

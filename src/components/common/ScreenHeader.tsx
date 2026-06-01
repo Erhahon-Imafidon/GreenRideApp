@@ -9,7 +9,11 @@ interface Props {
     onBack?: () => void;
 }
 
-const ScreenHeader: React.FC<Props> = ({ children, showBack = false, onBack }) => {
+const ScreenHeader: React.FC<Props> = ({
+    children,
+    showBack = false,
+    onBack,
+}) => {
     return (
         <LinearGradient
             colors={Colors.gradientGreen}
@@ -24,7 +28,9 @@ const ScreenHeader: React.FC<Props> = ({ children, showBack = false, onBack }) =
                     accessibilityLabel="Go back"
                     className="mb-3"
                 >
-                    <Text className="text-white text-sm font-semibold">← Back</Text>
+                    <Text className="text-white text-sm font-semibold">
+                        ← Back
+                    </Text>
                 </TouchableOpacity>
             )}
             {children}

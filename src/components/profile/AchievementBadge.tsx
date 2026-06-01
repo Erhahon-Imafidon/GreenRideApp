@@ -15,7 +15,11 @@ interface Props {
 const AchievementBadge: React.FC<Props> = ({ achievement }) => {
     return (
         <View
-            className={`w-14 h-14 rounded-2xl items-center justify-center ${achievement.unlocked ? 'scheme:bg-electricBadge' : 'scheme:bg-surface opacity-40'}`}
+            className={`w-14 h-14 rounded-2xl items-center justify-center ${
+                achievement.unlocked
+                    ? 'scheme:bg-electricBadge'
+                    : 'scheme:bg-surface opacity-40'
+            }`}
             accessibilityLabel={
                 achievement.unlocked
                     ? `${achievement.label} achievement unlocked`

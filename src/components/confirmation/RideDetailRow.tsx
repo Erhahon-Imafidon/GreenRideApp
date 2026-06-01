@@ -16,7 +16,9 @@ const RideDetailRow: React.FC<Props> = ({
 }) => {
     return (
         <View
-            className={`flex-row items-center justify-between py-3 ${!isLast ? 'scheme:border-border border-b' : ''}`}
+            className={`flex-row items-center justify-between py-3 ${
+                !isLast ? 'scheme:border-border border-b' : ''
+            }`}
         >
             <Text className="scheme:text-textSecondary text-sm">{label}</Text>
             <Text

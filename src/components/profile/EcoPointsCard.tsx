@@ -30,7 +30,9 @@ const EcoPointsCard: React.FC<Props> = ({ points }) => {
                     >
                         🪙 {points}
                     </Text>
-                    <Text style={{ color: '#8D6E00', fontSize: 12, marginTop: 2 }}>
+                    <Text
+                        style={{ color: '#8D6E00', fontSize: 12, marginTop: 2 }}
+                    >
                         EcoPoints balance
                     </Text>
                 </View>

@@ -1,5 +1,11 @@
 import React from 'react';
-import { FlatList, View, Text, ActivityIndicator, RefreshControl } from 'react-native';
+import {
+    FlatList,
+    View,
+    Text,
+    ActivityIndicator,
+    RefreshControl,
+} from 'react-native';
 import { Ride } from '../../types';
 import RideCard from './RideCard';
 
@@ -10,7 +16,12 @@ interface Props {
     onRefresh: () => void;
 }
 
-const RideList: React.FC<Props> = ({ rides, loading, onSelectRide, onRefresh }) => {
+const RideList: React.FC<Props> = ({
+    rides,
+    loading,
+    onSelectRide,
+    onRefresh,
+}) => {
     if (loading && rides.length === 0) {
         return (
             <View className="flex-1 items-center justify-center py-12">
@@ -39,7 +50,7 @@ const RideList: React.FC<Props> = ({ rides, loading, onSelectRide, onRefresh }) 
     return (
         <FlatList
             data={rides}
-            keyExtractor={item => String(item.id)}
+            keyExtractor={(item) => String(item.id)}
             renderItem={({ item }) => (
                 <RideCard ride={item} onPress={onSelectRide} />
             )}

@@ -1,7 +1,11 @@
-import profileReducer, { addCompletedRide } from '../../store/slices/profileSlice';
+import profileReducer, {
+    addCompletedRide,
+} from '../../store/slices/profileSlice';
 import { RideHistoryItem } from '../../types';
 
-const makeRideItem = (overrides: Partial<RideHistoryItem> = {}): RideHistoryItem => ({
+const makeRideItem = (
+    overrides: Partial<RideHistoryItem> = {}
+): RideHistoryItem => ({
     id: '1',
     rideId: 1,
     vehicleType: 'Electric',
@@ -22,25 +26,46 @@ describe('profileSlice', () => {
     });
 
     it('increments totalRides by 1 when a ride is completed', () => {
-        const state = profileReducer(undefined, addCompletedRide(makeRideItem()));
+        const state = profileReducer(
+            undefined,
+            addCompletedRide(makeRideItem())
+        );
         expect(state.totalRides).toBe(1);
     });
 
     it('accumulates totalCo2Saved correctly across two rides', () => {
-        let state = profileReducer(undefined, addCompletedRide(makeRideItem({ co2Saved: 1.4 })));
-        state = profileReducer(state, addCompletedRide(makeRideItem({ id: '2', co2Saved: 0.8 })));
+        let state = profileReducer(
+            undefined,
+            addCompletedRide(makeRideItem({ co2Saved: 1.4 }))
+        );
+        state = profileReducer(
+            state,
+            addCompletedRide(makeRideItem({ id: '2', co2Saved: 0.8 }))
+        );
         expect(state.totalCo2Saved).toBe(2.2);
     });
 
     it('accumulates ecoPoints correctly', () => {
-        let state = profileReducer(undefined, addCompletedRide(makeRideItem({ ecoPointsEarned: 14 })));
-        state = profileReducer(state, addCompletedRide(makeRideItem({ id: '2', ecoPointsEarned: 8 })));
+        let state = profileReducer(
+            undefined,
+            addCompletedRide(makeRideItem({ ecoPointsEarned: 14 }))
+        );
+        state = profileReducer(
+            state,
+            addCompletedRide(makeRideItem({ id: '2', ecoPointsEarned: 8 }))
+        );
         expect(state.ecoPoints).toBe(22);
     });
 
     it('prepends new rides to rideHistory (newest first)', () => {
-        let state = profileReducer(undefined, addCompletedRide(makeRideItem({ id: 'first' })));
-        state = profileReducer(state, addCompletedRide(makeRideItem({ id: 'second' })));
+        let state = profileReducer(
+            undefined,
+            addCompletedRide(makeRideItem({ id: 'first' }))
+        );
+        state = profileReducer(
+            state,
+            addCompletedRide(makeRideItem({ id: 'second' }))
+        );
         expect(state.rideHistory[0].id).toBe('second');
         expect(state.rideHistory[1].id).toBe('first');
     });

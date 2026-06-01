@@ -26,7 +26,9 @@ const GradientButton: React.FC<Props> = ({
             accessibilityState={{ disabled }}
         >
             <LinearGradient
-                colors={disabled ? ['#8DB8AE', '#8DB8AE'] : Colors.gradientGreen}
+                colors={
+                    disabled ? ['#8DB8AE', '#8DB8AE'] : Colors.gradientGreen
+                }
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={{ borderRadius: 12 }}

@@ -1,24 +1,44 @@
 import { configureStore, createListenerMiddleware } from '@reduxjs/toolkit';
-import { Appearance } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import ridesReducer from './slices/ridesSlice';
 import bookingReducer from './slices/bookingSlice';
-import profileReducer from './slices/profileSlice';
-import themeReducer, { setTheme, toggleTheme } from './slices/themeSlice';
+import profileReducer, {
+    addCompletedRide,
+    loadProfile,
+    ProfileState,
+} from './slices/profileSlice';
 
-const themeListener = createListenerMiddleware();
+export const PROFILE_STORAGE_KEY = '@greenride_profile';
 
-themeListener.startListening({
-    actionCreator: setTheme,
-    effect: action => {
-        Appearance.setColorScheme(action.payload);
-    },
-});
+export const loadProfileFromStorage = async (
+    dispatch: (action: ReturnType<typeof loadProfile>) => void
+) => {
+    try {
+        const raw = await AsyncStorage.getItem(PROFILE_STORAGE_KEY);
+        if (raw) {
+            dispatch(loadProfile(JSON.parse(raw) as ProfileState));
+        }
+    } catch (e) {
+        if (__DEV__) {
+            console.warn('[AsyncStorage] Failed to load profile:', e);
+        }
+    }
+};
 
-themeListener.startListening({
-    actionCreator: toggleTheme,
+const profileListener = createListenerMiddleware();
+
+profileListener.startListening({
+    actionCreator: addCompletedRide,
     effect: (_action, listenerApi) => {
-        const { theme } = listenerApi.getState() as { theme: { mode: 'light' | 'dark' } };
-        Appearance.setColorScheme(theme.mode);
+        const { profile } = listenerApi.getState() as { profile: ProfileState };
+        AsyncStorage.setItem(
+            PROFILE_STORAGE_KEY,
+            JSON.stringify(profile)
+        ).catch((e) => {
+            if (__DEV__) {
+                console.warn('[AsyncStorage] Failed to save profile:', e);
+            }
+        });
     },
 });
 
@@ -27,11 +47,10 @@ const store = configureStore({
         rides: ridesReducer,
         booking: bookingReducer,
         profile: profileReducer,
-        theme: themeReducer,
     },
-    middleware: getDefaultMiddleware =>
+    middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({ serializableCheck: false }).prepend(
-            themeListener.middleware,
+            profileListener.middleware
         ),
     devTools: __DEV__,
 });

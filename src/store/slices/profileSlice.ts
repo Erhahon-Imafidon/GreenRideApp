@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RideHistoryItem } from '../../types';
 
-interface ProfileState {
+export interface ProfileState {
     totalRides: number;
     totalCo2Saved: number;
     ecoPoints: number;
@@ -22,13 +22,16 @@ const profileSlice = createSlice({
         addCompletedRide(state, action: PayloadAction<RideHistoryItem>) {
             state.totalRides += 1;
             state.totalCo2Saved = parseFloat(
-                (state.totalCo2Saved + action.payload.co2Saved).toFixed(2),
+                (state.totalCo2Saved + action.payload.co2Saved).toFixed(2)
             );
             state.ecoPoints += action.payload.ecoPointsEarned;
             state.rideHistory.unshift(action.payload);
         },
+        loadProfile(_state, action: PayloadAction<ProfileState>) {
+            return action.payload;
+        },
     },
 });
 
-export const { addCompletedRide } = profileSlice.actions;
+export const { addCompletedRide, loadProfile } = profileSlice.actions;
 export default profileSlice.reducer;

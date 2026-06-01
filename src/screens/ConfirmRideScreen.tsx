@@ -1,8 +1,7 @@
 import React from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation, type NavigationProp } from '@react-navigation/native';
 import { useAppDispatch, useAppSelector } from '../hooks/reduxHook';
 import { setBookingStatus } from '../store/slices/bookingSlice';
 import { addCompletedRide } from '../store/slices/profileSlice';
@@ -12,17 +11,21 @@ import RideDetailRow from '../components/confirmation/RideDetailRow';
 import GradientButton from '../components/common/GradientButton';
 import { Colors } from '../constants/colors';
 import { RideHistoryItem } from '../types';
+import { createBooking } from '../api/ridesService';
 
-type NavProp = NativeStackNavigationProp<{
+type HomeStackNav = NavigationProp<{
+    HomeMain: undefined;
     ConfirmRide: undefined;
     BookingSuccess: undefined;
 }>;
 
 const ConfirmRideScreen: React.FC = () => {
-    const navigation = useNavigation<NavProp>();
+    const navigation = useNavigation<HomeStackNav>();
     const dispatch = useAppDispatch();
-    const selectedRide = useAppSelector(state => state.rides.selectedRide);
-    const { origin, destination, status } = useAppSelector(state => state.booking);
+    const selectedRide = useAppSelector((state) => state.rides.selectedRide);
+    const { origin, destination, status } = useAppSelector(
+        (state) => state.booking
+    );
 
     if (!selectedRide) {
         navigation.goBack();
@@ -47,6 +50,7 @@ const ConfirmRideScreen: React.FC = () => {
 
             dispatch(addCompletedRide(historyItem));
             dispatch(setBookingStatus('booked'));
+            createBooking(historyItem).catch(() => {});
             navigation.navigate('BookingSuccess');
         }, 1000);
     };
@@ -72,20 +76,36 @@ const ConfirmRideScreen: React.FC = () => {
 
                     <View
                         className="scheme:bg-surface rounded-2xl px-4 mb-6 scheme:border-border border"
-                        style={{ shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 8, elevation: 2 }}
+                        style={{
+                            shadowColor: '#000',
+                            shadowOpacity: 0.05,
+                            shadowRadius: 8,
+                            elevation: 2,
+                        }}
                     >
-                        <RideDetailRow label="Estimated Price" value={`$${selectedRide.price.toFixed(2)}`} />
+                        <RideDetailRow
+                            label="Estimated Price"
+                            value={`₦${selectedRide.price.toLocaleString()}`}
+                        />
                         <RideDetailRow label="ETA" value={selectedRide.eta} />
                         <RideDetailRow
                             label="EcoPoints Earned"
                             value={`+${ecoPointsEarned} pts 🪙`}
                             valueColor={Colors.ecoPoints}
                         />
-                        <RideDetailRow label="Vehicle Type" value={selectedRide.vehicleType} isLast />
+                        <RideDetailRow
+                            label="Vehicle Type"
+                            value={selectedRide.vehicleType}
+                            isLast
+                        />
                     </View>
 
                     <GradientButton
-                        title={status === 'loading' ? 'Confirming...' : '✅ Confirm Ride'}
+                        title={
+                            status === 'loading'
+                                ? 'Confirming...'
+                                : '✅ Confirm Ride'
+                        }
                         onPress={handleConfirm}
                         disabled={status === 'loading'}
                         accessibilityLabel="Confirm your ride booking"
