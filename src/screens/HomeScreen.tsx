@@ -55,6 +55,7 @@ const HomeScreen: React.FC = () => {
     const [destinationCoords, setDestinationCoords] = useState<
         Coordinate | undefined
     >();
+    const [geocodeError, setGeocodeError] = useState<string | undefined>();
 
     const requestLocationPermission = async () => {
         if (Platform.OS === 'android') {
@@ -74,8 +75,10 @@ const HomeScreen: React.FC = () => {
     const geocodeDestination = async (address: string) => {
         if (!address.trim()) {
             setDestinationCoords(undefined);
+            setGeocodeError(undefined);
             return;
         }
+        setGeocodeError(undefined);
         try {
             const query = encodeURIComponent(address);
             const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${query}&key=${MAPS_API_KEY}`;
@@ -85,11 +88,13 @@ const HomeScreen: React.FC = () => {
                 const { lat, lng } = json.results[0].geometry.location;
                 setDestinationCoords({ latitude: lat, longitude: lng });
             } else {
+                setGeocodeError('Address not found. Try a different search.');
                 if (__DEV__) {
                     console.log('[GreenRide] Geocoding failed:', json.status);
                 }
             }
         } catch (e) {
+            setGeocodeError('Could not search. Check your connection.');
             if (__DEV__) {
                 console.log('[GreenRide] Geocoding error:', e);
             }
@@ -153,7 +158,10 @@ const HomeScreen: React.FC = () => {
                     <Text>🔍</Text>
                     <TextInput
                         value={destinationInput}
-                        onChangeText={setDestinationInput}
+                        onChangeText={(text) => {
+                            setDestinationInput(text);
+                            if (geocodeError) { setGeocodeError(undefined); }
+                        }}
                         onSubmitEditing={() =>
                             geocodeDestination(destinationInput)
                         }
@@ -164,6 +172,12 @@ const HomeScreen: React.FC = () => {
                         returnKeyType="search"
                     />
                 </View>
+
+                {geocodeError && (
+                    <Text className="text-red-500 text-xs mb-3 -mt-2 px-1">
+                        {geocodeError}
+                    </Text>
+                )}
 
                 <Text className="scheme:text-textPrimary font-bold text-lg mb-3">
                     Available Rides
