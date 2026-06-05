@@ -89,4 +89,6 @@ const styles = StyleSheet.create({
     map: { width: '100%', height: '100%' },
 });
 
-export default RideMap;
+// MapView is expensive to re-render; memoize so typing in HomeScreen's
+// destination field doesn't re-render the map on every keystroke.
+export default React.memo(RideMap);

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TouchableOpacity, Text } from 'react-native';
+import { TouchableOpacity, Text } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { Colors } from '../../constants/colors';
 
@@ -38,4 +38,5 @@ const ScreenHeader: React.FC<Props> = ({
     );
 };
 
-export default ScreenHeader;
+// Reused across multiple screens — memoize for reuse.
+export default React.memo(ScreenHeader);
