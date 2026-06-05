@@ -41,4 +41,5 @@ const GradientButton: React.FC<Props> = ({
     );
 };
 
-export default GradientButton;
+// Reused across ConfirmRide and BookingSuccess screens — memoize for reuse.
+export default React.memo(GradientButton);

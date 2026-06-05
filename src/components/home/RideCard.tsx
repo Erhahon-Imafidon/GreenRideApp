@@ -63,4 +63,6 @@ const RideCard: React.FC<Props> = ({ ride, onPress }) => {
     );
 };
 
-export default RideCard;
+// Rendered once per FlatList row, so memoize to skip re-renders when the
+// parent (HomeScreen) re-renders on each destination keystroke.
+export default React.memo(RideCard);

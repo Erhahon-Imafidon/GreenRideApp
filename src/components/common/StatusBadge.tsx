@@ -26,4 +26,5 @@ const StatusBadge: React.FC<Props> = ({ vehicleType }) => {
     );
 };
 
-export default StatusBadge;
+// Rendered inside every RideCard — memoize so list re-renders stay cheap.
+export default React.memo(StatusBadge);

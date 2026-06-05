@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -21,6 +21,7 @@ import { getRides } from '../api/ridesService';
 import RideList from '../components/home/RideList';
 import RideMap from '../components/map/RideMap';
 import { Ride } from '../types';
+import fallbackRides from '../data/rides.json';
 import { MAPS_API_KEY } from '../constants/maps';
 
 interface Coordinate {
@@ -28,26 +29,23 @@ interface Coordinate {
     longitude: number;
 }
 
-const MOCK_RIDES: Ride[] = [
-    {
-        id: 1,
-        vehicleType: 'Electric',
-        eta: '3 mins',
-        price: 2500,
-        co2Saved: 1.4,
-    },
-    { id: 2, vehicleType: 'Hybrid', eta: '4 mins', price: 1800, co2Saved: 0.8 },
-];
+// Hoisted so the object reference is stable across renders — otherwise the
+// memoized RideMap would re-render on every HomeScreen render.
+const MAP_STYLE = { height: 220 };
+
+// Use `src/data/rides.json` as the local fallback dataset when the server
+// is unreachable. This keeps the data authoritative and avoids duplicating
+// the mock rides inline in this file.
+const MOCK_RIDES: Ride[] = fallbackRides as unknown as Ride[];
 
 const HomeScreen: React.FC = () => {
-    const navigation =
-        useNavigation<
-            NavigationProp<{
-                HomeMain: undefined;
-                ConfirmRide: undefined;
-                BookingSuccess: undefined;
-            }>
-        >();
+    const navigation = useNavigation<
+        NavigationProp<{
+            HomeMain: undefined;
+            ConfirmRide: undefined;
+            BookingSuccess: undefined;
+        }>
+    >();
     const dispatch = useAppDispatch();
     const { rides, loading } = useAppSelector((state) => state.rides);
     const { destination } = useAppSelector((state) => state.booking);
@@ -56,6 +54,7 @@ const HomeScreen: React.FC = () => {
         Coordinate | undefined
     >();
     const [geocodeError, setGeocodeError] = useState<string | undefined>();
+    const [hasSearched, setHasSearched] = useState(false);
 
     const requestLocationPermission = async () => {
         if (Platform.OS === 'android') {
@@ -72,7 +71,7 @@ const HomeScreen: React.FC = () => {
         }
     };
 
-    const geocodeDestination = async (address: string) => {
+    const geocodeDestination = useCallback(async (address: string) => {
         if (!address.trim()) {
             setDestinationCoords(undefined);
             setGeocodeError(undefined);
@@ -99,14 +98,15 @@ const HomeScreen: React.FC = () => {
                 console.log('[GreenRide] Geocoding error:', e);
             }
         }
-    };
+    }, []);
 
-    const fetchRides = async () => {
+    const fetchRides = useCallback(async () => {
         dispatch(setLoading(true));
         dispatch(setError(null));
         try {
             const data = await getRides();
             dispatch(setRides(data));
+            console.log('[GreenRide] Fetched rides:', data);
         } catch {
             if (__DEV__) {
                 console.log(
@@ -117,30 +117,45 @@ const HomeScreen: React.FC = () => {
         } finally {
             dispatch(setLoading(false));
         }
-    };
+    }, [dispatch]);
+
+    // Triggered when the user submits a destination — only then do we hit the
+    // rides API (and geocode for the map pin). This is also why a JSON server
+    // started after app launch now works: the request is made on demand.
+    const handleSearch = useCallback(() => {
+        const trimmed = destinationInput.trim();
+        if (!trimmed) {
+            return;
+        }
+        setHasSearched(true);
+        geocodeDestination(trimmed);
+        fetchRides();
+    }, [destinationInput, geocodeDestination, fetchRides]);
 
     useEffect(() => {
         requestLocationPermission();
-        fetchRides();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // Clear destination coords when booking resets
+    // Clear destination coords + search state when booking resets
     useEffect(() => {
         if (!destination) {
             setDestinationCoords(undefined);
+            setHasSearched(false);
         }
     }, [destination]);
 
-    const handleSelectRide = (ride: Ride) => {
-        dispatch(setSelectedRide(ride));
-        dispatch(setDestination(destinationInput || 'Destination'));
-        navigation.navigate('ConfirmRide');
-    };
+    const handleSelectRide = useCallback(
+        (ride: Ride) => {
+            dispatch(setSelectedRide(ride));
+            dispatch(setDestination(destinationInput || 'Destination'));
+            navigation.navigate('ConfirmRide');
+        },
+        [dispatch, destinationInput, navigation]
+    );
 
     return (
         <SafeAreaView className="flex-1 scheme:bg-background">
-            <RideMap style={{ height: 220 }} destination={destinationCoords} />
+            <RideMap style={MAP_STYLE} destination={destinationCoords} />
 
             <KeyboardAvoidingView
                 className="flex-1 px-4 pt-4"
@@ -160,11 +175,11 @@ const HomeScreen: React.FC = () => {
                         value={destinationInput}
                         onChangeText={(text) => {
                             setDestinationInput(text);
-                            if (geocodeError) { setGeocodeError(undefined); }
+                            if (geocodeError) {
+                                setGeocodeError(undefined);
+                            }
                         }}
-                        onSubmitEditing={() =>
-                            geocodeDestination(destinationInput)
-                        }
+                        onSubmitEditing={handleSearch}
                         placeholder="Where are you going?"
                         placeholderTextColor="#8DB8AE"
                         className="flex-1 scheme:text-textPrimary text-sm"
@@ -186,6 +201,7 @@ const HomeScreen: React.FC = () => {
                 <RideList
                     rides={rides}
                     loading={loading}
+                    searched={hasSearched}
                     onSelectRide={handleSelectRide}
                     onRefresh={fetchRides}
                 />

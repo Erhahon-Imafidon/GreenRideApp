@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
     FlatList,
     View,
     Text,
     ActivityIndicator,
     RefreshControl,
+    ListRenderItemInfo,
 } from 'react-native';
 import { Ride } from '../../types';
 import RideCard from './RideCard';
@@ -12,6 +13,7 @@ import RideCard from './RideCard';
 interface Props {
     rides: Ride[];
     loading: boolean;
+    searched: boolean;
     onSelectRide: (ride: Ride) => void;
     onRefresh: () => void;
 }
@@ -19,9 +21,21 @@ interface Props {
 const RideList: React.FC<Props> = ({
     rides,
     loading,
+    searched,
     onSelectRide,
     onRefresh,
 }) => {
+    // Stable renderItem/keyExtractor so the memoized RideCard rows don't
+    // re-render when RideList re-renders with the same data.
+    const renderItem = useCallback(
+        ({ item }: ListRenderItemInfo<Ride>) => (
+            <RideCard ride={item} onPress={onSelectRide} />
+        ),
+        [onSelectRide]
+    );
+
+    const keyExtractor = useCallback((item: Ride) => String(item.id), []);
+
     if (loading && rides.length === 0) {
         return (
             <View className="flex-1 items-center justify-center py-12">
@@ -34,14 +48,17 @@ const RideList: React.FC<Props> = ({
     }
 
     if (!loading && rides.length === 0) {
+        // Differentiate "no search yet" from "searched but empty".
         return (
             <View className="flex-1 items-center justify-center py-12">
                 <Text style={{ fontSize: 40 }}>🌿</Text>
                 <Text className="scheme:text-textPrimary font-semibold text-base mt-3">
-                    No rides available
+                    {searched ? 'No rides available' : 'Where to?'}
                 </Text>
                 <Text className="scheme:text-textSecondary text-sm mt-1">
-                    Pull down to refresh
+                    {searched
+                        ? 'Pull down to refresh'
+                        : 'Enter a destination to see available rides'}
                 </Text>
             </View>
         );
@@ -50,10 +67,8 @@ const RideList: React.FC<Props> = ({
     return (
         <FlatList
             data={rides}
-            keyExtractor={(item) => String(item.id)}
-            renderItem={({ item }) => (
-                <RideCard ride={item} onPress={onSelectRide} />
-            )}
+            keyExtractor={keyExtractor}
+            renderItem={renderItem}
             refreshControl={
                 <RefreshControl
                     refreshing={loading}
@@ -68,4 +83,4 @@ const RideList: React.FC<Props> = ({
     );
 };
 
-export default RideList;
+export default React.memo(RideList);
