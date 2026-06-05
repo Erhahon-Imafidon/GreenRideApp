@@ -21,6 +21,7 @@ import { getRides } from '../api/ridesService';
 import RideList from '../components/home/RideList';
 import RideMap from '../components/map/RideMap';
 import { Ride } from '../types';
+import fallbackRides from '../data/rides.json';
 import { MAPS_API_KEY } from '../constants/maps';
 
 interface Coordinate {
@@ -32,16 +33,10 @@ interface Coordinate {
 // memoized RideMap would re-render on every HomeScreen render.
 const MAP_STYLE = { height: 220 };
 
-const MOCK_RIDES: Ride[] = [
-    {
-        id: 1,
-        vehicleType: 'Electric',
-        eta: '3 mins',
-        price: 2500,
-        co2Saved: 1.4,
-    },
-    { id: 2, vehicleType: 'Hybrid', eta: '4 mins', price: 1800, co2Saved: 0.8 },
-];
+// Use `src/data/rides.json` as the local fallback dataset when the server
+// is unreachable. This keeps the data authoritative and avoids duplicating
+// the mock rides inline in this file.
+const MOCK_RIDES: Ride[] = fallbackRides as unknown as Ride[];
 
 const HomeScreen: React.FC = () => {
     const navigation = useNavigation<
