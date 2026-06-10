@@ -5,8 +5,15 @@ import {
     TextInput,
     KeyboardAvoidingView,
     Platform,
-    PermissionsAndroid,
+    Alert,
 } from 'react-native';
+import {
+    request,
+    PERMISSIONS,
+    RESULTS,
+    openSettings,
+} from 'react-native-permissions';
+import { promptForEnableLocationIfNeeded } from 'react-native-android-location-enabler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, type NavigationProp } from '@react-navigation/native';
 import { useAppDispatch, useAppSelector } from '../hooks/reduxHook';
@@ -57,16 +64,29 @@ const HomeScreen: React.FC = () => {
     const [hasSearched, setHasSearched] = useState(false);
 
     const requestLocationPermission = async () => {
-        if (Platform.OS === 'android') {
-            await PermissionsAndroid.request(
-                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-                {
-                    title: 'Location Permission',
-                    message:
-                        'GreenRide needs your location to show nearby rides.',
-                    buttonPositive: 'Allow',
-                    buttonNegative: 'Deny',
-                }
+        const permission = Platform.select({
+            android: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+            ios: PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
+        });
+
+        if (!permission) return;
+
+        const result = await request(permission);
+
+        if (result === RESULTS.GRANTED) {
+            if (Platform.OS === 'android') {
+                await promptForEnableLocationIfNeeded({
+                    interval: 10000,
+                });
+            }
+        } else if (result === RESULTS.BLOCKED) {
+            Alert.alert(
+                'Location Required',
+                'Please enable location in Settings so GreenRide can show nearby rides.',
+                [
+                    { text: 'Cancel', style: 'cancel' },
+                    { text: 'Open Settings', onPress: () => openSettings() },
+                ]
             );
         }
     };
