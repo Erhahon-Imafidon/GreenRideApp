@@ -47,6 +47,9 @@
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
+	<key>NSLocationWhenInUseUsageDescription</key>
+<string>GreenRide needs your location to show nearby rides.</string>
+
 	<array>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>

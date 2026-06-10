@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, Pressable } from 'react-native';
+import { Text, View } from 'react-native';
 import { createStaticNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -9,28 +9,20 @@ import ConfirmRideScreen from '../screens/ConfirmRideScreen';
 import BookingSuccessScreen from '../screens/BookingSuccessScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 
-const TabIcon = ({ emoji }: { emoji: string }) => (
-    <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-        <Text style={{ fontSize: 22 }}>{emoji}</Text>
+const TabIcon = ({ emoji, focused }: { emoji: string; focused: boolean }) => (
+    <View
+        style={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: focused ? '#E8F5EE' : 'transparent',
+            width: 56,
+            height: 28,
+            borderRadius: 14,
+        }}
+    >
+        <Text style={{ fontSize: 20 }}>{emoji}</Text>
     </View>
 );
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const TabButton = (props: any) => {
-    const isSelected = props.accessibilityState?.selected;
-    return (
-        <Pressable
-            {...props}
-            style={[
-                props.style,
-                {
-                    borderTopWidth: 2,
-                    borderTopColor: isSelected ? '#1A7A4A' : 'transparent',
-                },
-            ]}
-        />
-    );
-};
 
 const HomeStack = createNativeStackNavigator({
     screenOptions: { headerShown: false },
@@ -59,16 +51,18 @@ const MainTabs = createBottomTabNavigator({
             screen: HomeStack,
             options: {
                 tabBarLabel: 'Home',
-                tabBarButton: TabButton,
-                tabBarIcon: () => <TabIcon emoji="🏠" />,
+                tabBarIcon: ({ focused }) => (
+                    <TabIcon emoji="🏠" focused={focused} />
+                ),
             },
         },
         Profile: {
             screen: ProfileScreen,
             options: {
                 tabBarLabel: 'Profile',
-                tabBarButton: TabButton,
-                tabBarIcon: () => <TabIcon emoji="👤" />,
+                tabBarIcon: ({ focused }) => (
+                    <TabIcon emoji="👤" focused={focused} />
+                ),
             },
         },
     },
