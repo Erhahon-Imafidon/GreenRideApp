@@ -35,7 +35,7 @@ describe('RideCard', () => {
         expect(screen.getAllByText('Electric').length).toBeGreaterThanOrEqual(
             1
         );
-        expect(screen.getByText('$7.50')).toBeTruthy();
+        expect(screen.getByText('₦7.5')).toBeTruthy();
         expect(screen.getByText('🌱 Saves 1.4 kg CO₂')).toBeTruthy();
         expect(screen.getByText('3 mins away')).toBeTruthy();
     });
@@ -45,7 +45,7 @@ describe('RideCard', () => {
 
         // getAllByText because the vehicle type appears in both the RideCard Text and the mocked StatusBadge
         expect(screen.getAllByText('Hybrid').length).toBeGreaterThanOrEqual(1);
-        expect(screen.getByText('$6.80')).toBeTruthy();
+        expect(screen.getByText('₦6.8')).toBeTruthy();
         expect(screen.getByText('🌱 Saves 0.8 kg CO₂')).toBeTruthy();
     });
 
