@@ -1,1 +1,3 @@
-export const promptForEnableLocationIfNeeded = jest.fn().mockResolvedValue('enabled');
+export const promptForEnableLocationIfNeeded = jest
+    .fn()
+    .mockResolvedValue('enabled');
