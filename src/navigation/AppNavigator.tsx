@@ -10,18 +10,19 @@ import BookingSuccessScreen from '../screens/BookingSuccessScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 
 const TabIcon = ({ emoji, focused }: { emoji: string; focused: boolean }) => (
-    <View style={{
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: focused ? '#E8F5EE' : 'transparent',
-        width: 56,
-        height: 28,
-        borderRadius: 14,
-    }}>
+    <View
+        style={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: focused ? '#E8F5EE' : 'transparent',
+            width: 56,
+            height: 28,
+            borderRadius: 14,
+        }}
+    >
         <Text style={{ fontSize: 20 }}>{emoji}</Text>
     </View>
 );
-
 
 const HomeStack = createNativeStackNavigator({
     screenOptions: { headerShown: false },
@@ -50,14 +51,18 @@ const MainTabs = createBottomTabNavigator({
             screen: HomeStack,
             options: {
                 tabBarLabel: 'Home',
-                tabBarIcon: ({ focused }) => <TabIcon emoji="🏠" focused={focused} />,
+                tabBarIcon: ({ focused }) => (
+                    <TabIcon emoji="🏠" focused={focused} />
+                ),
             },
         },
         Profile: {
             screen: ProfileScreen,
             options: {
                 tabBarLabel: 'Profile',
-                tabBarIcon: ({ focused }) => <TabIcon emoji="👤" focused={focused} />,
+                tabBarIcon: ({ focused }) => (
+                    <TabIcon emoji="👤" focused={focused} />
+                ),
             },
         },
     },
