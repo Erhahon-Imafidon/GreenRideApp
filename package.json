@@ -9,6 +9,8 @@
         "start": "react-native start",
         "test": "jest",
         "format": "npx prettier . --write",
+        "watch": "npx jest --watch",
+        "coverage": "npx jest --coverage",
         "server": "json-server --watch server/db.json --port 3001"
     },
     "dependencies": {
