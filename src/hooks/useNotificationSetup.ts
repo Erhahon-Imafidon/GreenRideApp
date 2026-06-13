@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import messaging from '@react-native-firebase/messaging';
+import crashlytics from '@react-native-firebase/crashlytics';
 import {
     requestUserPermission,
     getFcmToken,
@@ -18,6 +19,7 @@ export function useNotificationSetup(): void {
                 await getFcmToken();
             } catch (e) {
                 if (__DEV__) {
+                    crashlytics().recordError(e as Error);
                     console.warn('[GreenRide] Notification setup failed:', e);
                 }
             }

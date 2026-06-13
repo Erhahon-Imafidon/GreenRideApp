@@ -16,6 +16,7 @@ import {
 import { promptForEnableLocationIfNeeded } from 'react-native-android-location-enabler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, type NavigationProp } from '@react-navigation/native';
+import crashlytics from '@react-native-firebase/crashlytics';
 import { useAppDispatch, useAppSelector } from '../hooks/reduxHook';
 import {
     setRides,
@@ -114,6 +115,7 @@ const HomeScreen: React.FC = () => {
             }
         } catch (e) {
             setGeocodeError('Could not search. Check your connection.');
+            crashlytics().recordError(e as Error);
             if (__DEV__) {
                 console.log('[GreenRide] Geocoding error:', e);
             }
