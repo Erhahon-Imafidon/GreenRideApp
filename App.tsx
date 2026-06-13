@@ -6,9 +6,12 @@ import { Provider } from 'react-redux';
 import store from './src/store';
 import { loadProfileFromStorage } from './src/store';
 import { ThemeProvider, useTheme } from './src/context/ThemeContext';
+import { useNotificationSetup } from './src/hooks/useNotificationSetup';
 
 function AppContent() {
     const { mode } = useTheme();
+
+    useNotificationSetup();
 
     useEffect(() => {
         loadProfileFromStorage(store.dispatch);

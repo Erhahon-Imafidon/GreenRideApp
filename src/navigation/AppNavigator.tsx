@@ -8,6 +8,7 @@ import HomeScreen from '../screens/HomeScreen';
 import ConfirmRideScreen from '../screens/ConfirmRideScreen';
 import BookingSuccessScreen from '../screens/BookingSuccessScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import { navigationRef } from './navigationRef';
 
 const TabIcon = ({ emoji, focused }: { emoji: string; focused: boolean }) => (
     <View
@@ -84,6 +85,6 @@ declare module '@react-navigation/core' {
 
 const Navigation = createStaticNavigation(RootStack);
 
-const AppNavigator = () => <Navigation />;
+const AppNavigator = () => <Navigation ref={navigationRef} />;
 
 export default AppNavigator;
